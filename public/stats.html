@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener Stats</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>URL Shortener Stats</h1>
+    
+    <section class="stats-section">
+        <h2>Link Statistics</h2>
+        <button onclick="loadStats()">Refresh Stats</button>
+        <table id="statsTable">
+            <thead>
+                <tr>
+                    <th>Original URL</th>
+                    <th>Short Code</th>
+                    <th>Clicks</th>
+                </tr>
+            </thead>
+            <tbody id="statsBody">
+                </tbody>
+        </table>
+    </section>
+
+    <script>
+        async function loadStats() {
+            const response = await fetch('/api/stats');
+            const links = await response.json();
+            const tableBody = document.getElementById('statsBody');
+            
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            links.forEach(link => {
+                const row = `
+                    <tr>
+                        <td><div class="truncate">${link.originalUrl}</div></td>
+                        <td><code>${link.shortCode}</code></td>
+                        <td><span class="badge">${link.clicks || 0}</span></td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        // Load stats automatically when the page opens
+        window.onload = loadStats;
+    </script>
+</body>
+</html> 
